@@ -5,8 +5,8 @@ import ru.extoozy.context.UserContext;
 import ru.extoozy.controller.TransactionStatisticController;
 import ru.extoozy.entity.UserProfileEntity;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.in.ConsoleInHelper;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.time.LocalDate;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
 public class GetPeriodStatisticHandler implements ActionHandler {
 
     private final TransactionStatisticController transactionStatisticController =
-            (TransactionStatisticController) ApplicationContext.getBean(TransactionStatisticController.class);
+            ApplicationContext.getBean(TransactionStatisticController.class);
 
     @Override
     public void handle() {

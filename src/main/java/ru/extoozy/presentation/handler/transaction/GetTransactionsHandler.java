@@ -5,14 +5,14 @@ import ru.extoozy.context.UserContext;
 import ru.extoozy.controller.TransactionController;
 import ru.extoozy.dto.transaction.TransactionDto;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.util.List;
 
 public class GetTransactionsHandler implements ActionHandler {
 
     TransactionController transactionController =
-            (TransactionController) ApplicationContext.getBean(TransactionController.class);
+            ApplicationContext.getBean(TransactionController.class);
 
     @Override
     public void handle() {

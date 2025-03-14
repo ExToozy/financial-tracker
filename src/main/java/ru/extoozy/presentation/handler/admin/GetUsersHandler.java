@@ -4,13 +4,13 @@ import ru.extoozy.context.ApplicationContext;
 import ru.extoozy.controller.UserController;
 import ru.extoozy.dto.user.UserDto;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.util.List;
 
 public class GetUsersHandler implements ActionHandler {
 
-    UserController userController = (UserController) ApplicationContext.getBean(UserController.class);
+    UserController userController = ApplicationContext.getBean(UserController.class);
 
     @Override
     public void handle() {

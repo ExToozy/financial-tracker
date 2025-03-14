@@ -6,18 +6,18 @@ import ru.extoozy.controller.UserProfileController;
 import ru.extoozy.dto.profile.UserProfileDto;
 import ru.extoozy.dto.transaction.TransactionDto;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.in.ConsoleInHelper;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.util.List;
 
 public class GetUserTransactionsHandler implements ActionHandler {
 
     TransactionController transactionController =
-            (TransactionController) ApplicationContext.getBean(TransactionController.class);
+            ApplicationContext.getBean(TransactionController.class);
 
     UserProfileController userProfileController =
-            (UserProfileController) ApplicationContext.getBean(UserProfileController.class);
+            ApplicationContext.getBean(UserProfileController.class);
 
     @Override
     public void handle() {

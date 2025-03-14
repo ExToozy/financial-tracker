@@ -39,9 +39,15 @@ import ru.extoozy.service.transaction.impl.TransactionServiceImpl;
 import ru.extoozy.service.user.UserService;
 import ru.extoozy.service.user.impl.UserServiceImpl;
 
+/**
+ * Класс для инициализации {@link FinancialTracker}.
+ */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class FinancialTrackerInitializer {
 
+    /**
+     * Создаёт, инициализирует {@link FinancialTracker} и возвращает его.
+     */
     public static FinancialTracker initialize() {
         EmailService emailService = new ConsoleMockEmailService();
 

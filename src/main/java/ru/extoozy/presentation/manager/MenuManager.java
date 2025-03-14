@@ -1,5 +1,6 @@
 package ru.extoozy.presentation.manager;
 
+import ru.extoozy.out.ConsoleOutHelper;
 import ru.extoozy.presentation.action.Action;
 import ru.extoozy.presentation.action.AdminAction;
 import ru.extoozy.presentation.action.BudgetAction;
@@ -8,15 +9,20 @@ import ru.extoozy.presentation.action.GoalAction;
 import ru.extoozy.presentation.action.StatisticAction;
 import ru.extoozy.presentation.action.TransactionAction;
 import ru.extoozy.presentation.action.UserAction;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
 
 import java.util.HashMap;
 
+/**
+ * Класс, управляющий отображением меню и выбором действий в системе.
+ */
 public class MenuManager {
 
     private final HashMap<Integer, Class<? extends Action>> userMenu;
     private final HashMap<Integer, Class<? extends Action>> adminMenu;
 
+    /**
+     * Инициализирует меню для пользователей и администраторов.
+     */
     public MenuManager() {
         userMenu = new HashMap<>();
         userMenu.put(1, BudgetAction.class);
@@ -31,14 +37,33 @@ public class MenuManager {
         adminMenu.put(2, ExitAction.class);
     }
 
+    /**
+     * Возвращает действие, выбранное из пользовательского меню.
+     *
+     * @param menuItemNumber номер пункта меню
+     * @return выбранное действие или {@code null}, если пункт меню некорректен
+     */
     public Action getActionFromUserMenu(String menuItemNumber) {
         return getActionFromMenu(menuItemNumber, userMenu);
     }
 
+    /**
+     * Возвращает действие, выбранное из меню администратора.
+     *
+     * @param menuItemNumber номер пункта меню
+     * @return выбранное действие или {@code null}, если пункт меню некорректен
+     */
     public Action getActionFromAdminMenu(String menuItemNumber) {
         return getActionFromMenu(menuItemNumber, adminMenu);
     }
 
+    /**
+     * Общий метод для получения действия из указанного меню.
+     *
+     * @param menuItemNumber номер пункта меню
+     * @param menu           меню, из которого выбирается действие
+     * @return выбранное действие или {@code null}, если пункт меню некорректен
+     */
     private Action getActionFromMenu(String menuItemNumber, HashMap<Integer, Class<? extends Action>> menu) {
         int actionNumber = Integer.parseInt(menuItemNumber.split("\\.")[0]);
         Class<? extends Action> action = menu.get(actionNumber);
@@ -58,15 +83,25 @@ public class MenuManager {
         return subActions[subActionIndex];
     }
 
-
+    /**
+     * Печатает пользовательское меню в консоль.
+     */
     public void printUserMenu() {
         printMenu(userMenu);
     }
 
+    /**
+     * Печатает меню администратора в консоль.
+     */
     public void printAdminMenu() {
         printMenu(adminMenu);
     }
 
+    /**
+     * Печатает указанное меню в консоль.
+     *
+     * @param menu меню для отображения
+     */
     private void printMenu(HashMap<Integer, Class<? extends Action>> menu) {
         ConsoleOutHelper.print("-".repeat(20));
         for (var menuItem : menu.entrySet()) {
@@ -78,5 +113,4 @@ public class MenuManager {
             ConsoleOutHelper.print("-".repeat(20));
         }
     }
-
 }

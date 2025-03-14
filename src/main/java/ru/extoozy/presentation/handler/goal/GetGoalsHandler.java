@@ -6,12 +6,12 @@ import ru.extoozy.controller.GoalController;
 import ru.extoozy.dto.goal.GoalDto;
 import ru.extoozy.entity.UserProfileEntity;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.util.List;
 
 public class GetGoalsHandler implements ActionHandler {
-    GoalController goalController = (GoalController) ApplicationContext.getBean(GoalController.class);
+    GoalController goalController = ApplicationContext.getBean(GoalController.class);
 
     @Override
     public void handle() {

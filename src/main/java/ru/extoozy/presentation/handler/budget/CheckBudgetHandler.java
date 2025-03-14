@@ -7,11 +7,11 @@ import ru.extoozy.dto.budget.BudgetDto;
 import ru.extoozy.entity.UserProfileEntity;
 import ru.extoozy.exception.ResourceNotFoundException;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 public class CheckBudgetHandler implements ActionHandler {
 
-    BudgetController budgetController = (BudgetController) ApplicationContext.getBean(BudgetController.class);
+    BudgetController budgetController = ApplicationContext.getBean(BudgetController.class);
 
     @Override
     public void handle() {

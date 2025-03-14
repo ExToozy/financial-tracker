@@ -6,15 +6,15 @@ import ru.extoozy.dto.transaction.TransactionDto;
 import ru.extoozy.dto.transaction.UpdateTransactionDto;
 import ru.extoozy.exception.ResourceNotFoundException;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.in.ConsoleInHelper;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.math.BigDecimal;
 
 public class UpdateTransactionHandler implements ActionHandler {
 
     TransactionController transactionController =
-            (TransactionController) ApplicationContext.getBean(TransactionController.class);
+            ApplicationContext.getBean(TransactionController.class);
 
 
     @Override

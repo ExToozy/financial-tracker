@@ -4,14 +4,14 @@ import ru.extoozy.context.ApplicationContext;
 import ru.extoozy.controller.GoalController;
 import ru.extoozy.dto.goal.CreateGoalDto;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.in.ConsoleInHelper;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.math.BigDecimal;
 
 public class CreateGoalHandler implements ActionHandler {
 
-    GoalController goalController = (GoalController) ApplicationContext.getBean(GoalController.class);
+    GoalController goalController = ApplicationContext.getBean(GoalController.class);
 
     @Override
     public void handle() {

@@ -5,12 +5,12 @@ import ru.extoozy.controller.AuthController;
 import ru.extoozy.dto.user.AuthUserDto;
 import ru.extoozy.exception.UserAlreadyExistsException;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.in.ConsoleInHelper;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 public class RegisterHandler implements ActionHandler {
 
-    private final AuthController authController = (AuthController) ApplicationContext.getBean(AuthController.class);
+    private final AuthController authController = ApplicationContext.getBean(AuthController.class);
 
     @Override
     public void handle() {

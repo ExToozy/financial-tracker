@@ -12,7 +12,7 @@ import ru.extoozy.controller.UserController;
 import ru.extoozy.controller.UserProfileController;
 import ru.extoozy.entity.UserEntity;
 import ru.extoozy.enums.UserRole;
-import ru.extoozy.presentation.in.ConsoleInHelper;
+import ru.extoozy.in.ConsoleInHelper;
 import ru.extoozy.presentation.manager.ActionManager;
 import ru.extoozy.presentation.manager.MenuManager;
 import ru.extoozy.repository.budget.BudgetRepository;
@@ -52,7 +52,7 @@ class FinancialTrackerTest {
     private FinancialTracker financialTracker;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         EmailService emailService = new ConsoleMockEmailService();
 
         BudgetRepository budgetRepository = new BudgetRepositoryImpl();
@@ -106,6 +106,7 @@ class FinancialTrackerTest {
                 Ilya
                 Makarov
                 6.1
+                нет
                 """;
         ByteArrayInputStream in = new ByteArrayInputStream(answers.getBytes());
         Field field = ConsoleInHelper.class.getDeclaredField("SCANNER");
@@ -139,6 +140,7 @@ class FinancialTrackerTest {
                 2.3
                 1
                 6.1
+                нет
                 """;
         ByteArrayInputStream in = new ByteArrayInputStream(answers.getBytes());
         Field field = ConsoleInHelper.class.getDeclaredField("SCANNER");
@@ -167,6 +169,7 @@ class FinancialTrackerTest {
                 1
                 3.3
                 6.1
+                нет
                 """;
         ByteArrayInputStream in = new ByteArrayInputStream(answers.getBytes());
         Field field = ConsoleInHelper.class.getDeclaredField("SCANNER");
@@ -190,6 +193,7 @@ class FinancialTrackerTest {
                 40000
                 1.3
                 6.1
+                нет
                 """;
         ByteArrayInputStream in = new ByteArrayInputStream(answers.getBytes());
         Field field = ConsoleInHelper.class.getDeclaredField("SCANNER");
@@ -212,6 +216,7 @@ class FinancialTrackerTest {
                 2025-12-01
                 4.3
                 6.1
+                нет
                 """;
         ByteArrayInputStream in = new ByteArrayInputStream(answers.getBytes());
         Field field = ConsoleInHelper.class.getDeclaredField("SCANNER");
@@ -228,6 +233,7 @@ class FinancialTrackerTest {
                 admin
                 1.1
                 2.1
+                нет
                 """;
         ByteArrayInputStream in = new ByteArrayInputStream(answers.getBytes());
         Field field = ConsoleInHelper.class.getDeclaredField("SCANNER");

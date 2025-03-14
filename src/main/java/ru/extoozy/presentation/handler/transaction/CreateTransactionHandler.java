@@ -5,15 +5,15 @@ import ru.extoozy.controller.TransactionController;
 import ru.extoozy.dto.transaction.CreateTransactionDto;
 import ru.extoozy.enums.TransactionType;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.in.ConsoleInHelper;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 import java.math.BigDecimal;
 
 public class CreateTransactionHandler implements ActionHandler {
 
     TransactionController transactionController =
-            (TransactionController) ApplicationContext.getBean(TransactionController.class);
+            ApplicationContext.getBean(TransactionController.class);
 
     @Override
     public void handle() {

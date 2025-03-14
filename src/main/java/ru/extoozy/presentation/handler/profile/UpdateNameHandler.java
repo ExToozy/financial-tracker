@@ -5,12 +5,12 @@ import ru.extoozy.context.UserContext;
 import ru.extoozy.controller.UserProfileController;
 import ru.extoozy.dto.profile.UpdateUserProfileDto;
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.in.ConsoleInHelper;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 public class UpdateNameHandler implements ActionHandler {
     private final UserProfileController userProfileController =
-            (UserProfileController) ApplicationContext.getBean(UserProfileController.class);
+            ApplicationContext.getBean(UserProfileController.class);
 
     @Override
     public void handle() {

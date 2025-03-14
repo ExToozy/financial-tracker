@@ -1,7 +1,7 @@
 package ru.extoozy.presentation.handler.exit;
 
 import ru.extoozy.presentation.handler.ActionHandler;
-import ru.extoozy.presentation.out.ConsoleOutHelper;
+import ru.extoozy.out.ConsoleOutHelper;
 
 public class ExitHandler implements ActionHandler {
     @Override
