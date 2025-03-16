@@ -1,10 +1,12 @@
-Описание:
+## Описание:
+
 Консольное приложения для отслеживания финансовых целей.
 
-Стек:
-Java 17, JUnit, AssertJ, Mockito, Gradle
+## Стек:
 
-Инструкция по запуску проекта:
+Java 17, JUnit, AssertJ, Mockito, Gradle, Jdbc, TestContainers, PostgreSQL
+
+## Инструкция по запуску проекта:
 
 1. git clone https://github.com/ExToozy/financial-tracker.git
 2. cd financial-tracker
