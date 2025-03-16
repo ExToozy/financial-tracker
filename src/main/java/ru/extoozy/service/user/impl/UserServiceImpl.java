@@ -6,10 +6,13 @@ import ru.extoozy.dto.user.UpdateUserDto;
 import ru.extoozy.dto.user.UserDto;
 import ru.extoozy.entity.UserEntity;
 import ru.extoozy.enums.UserRole;
+import ru.extoozy.exception.InvalidEmailException;
 import ru.extoozy.exception.ResourceNotFoundException;
 import ru.extoozy.mapper.UserMapper;
 import ru.extoozy.repository.user.UserRepository;
+import ru.extoozy.security.PasswordHelper;
 import ru.extoozy.service.user.UserService;
+import ru.extoozy.util.RegexUtil;
 
 import java.util.List;
 
@@ -27,7 +30,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void update(UpdateUserDto dto) {
+        if (RegexUtil.isInvalidEmail(dto.getEmail())) {
+            throw new InvalidEmailException("Email=%s is invalid");
+        }
         UserEntity entity = UserMapper.toEntity(dto);
+        if (dto.getPassword() != null) {
+            entity.setPassword(PasswordHelper.getPasswordHash(dto.getPassword()));
+        }
         userRepository.update(entity);
     }
 
