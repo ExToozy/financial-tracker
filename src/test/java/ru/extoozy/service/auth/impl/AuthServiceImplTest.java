@@ -9,6 +9,7 @@ import org.mockito.MockitoAnnotations;
 import ru.extoozy.context.UserContext;
 import ru.extoozy.dto.user.AuthUserDto;
 import ru.extoozy.entity.UserEntity;
+import ru.extoozy.exception.InvalidEmailException;
 import ru.extoozy.exception.ResourceNotFoundException;
 import ru.extoozy.exception.UserAlreadyExistsException;
 import ru.extoozy.exception.UserIsBlockedException;
@@ -46,6 +47,15 @@ class AuthServiceImplTest {
         assertThatThrownBy(() -> authService.register(dto))
                 .isInstanceOf(UserAlreadyExistsException.class)
                 .hasMessageContaining("User with email=test@example.com already exists");
+    }
+
+    @Test
+    @DisplayName("Регистрация пользователя - если email невалидный, выбрасывает исключение")
+    void testRegister_whenEmailInvalid_thenThrowException() {
+        AuthUserDto dto = new AuthUserDto("invalidEmail", "password");
+        assertThatThrownBy(() -> authService.register(dto))
+                .isInstanceOf(InvalidEmailException.class)
+                .hasMessageContaining("Email=invalidEmail is invalid");
     }
 
     @Test

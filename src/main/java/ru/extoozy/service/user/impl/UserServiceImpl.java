@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void update(UpdateUserDto dto) {
         if (RegexUtil.isInvalidEmail(dto.getEmail())) {
-            throw new InvalidEmailException("Email=%s is invalid");
+            throw new InvalidEmailException("Email=%s is invalid".formatted(dto.getEmail()));
         }
         UserEntity entity = UserMapper.toEntity(dto);
         if (dto.getPassword() != null) {

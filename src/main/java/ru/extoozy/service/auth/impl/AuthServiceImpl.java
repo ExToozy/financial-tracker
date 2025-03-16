@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UserAlreadyExistsException("User with email=%s already exists".formatted(dto.getEmail()));
         }
         if (RegexUtil.isInvalidEmail(dto.getEmail())) {
-            throw new InvalidEmailException("Email=%s is invalid");
+            throw new InvalidEmailException("Email=%s is invalid".formatted(dto.getEmail()));
         }
         dto.setPassword(PasswordHelper.getPasswordHash(dto.getPassword()));
         userService.create(dto);
