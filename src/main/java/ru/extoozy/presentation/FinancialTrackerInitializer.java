@@ -13,15 +13,15 @@ import ru.extoozy.controller.UserProfileController;
 import ru.extoozy.presentation.manager.ActionManager;
 import ru.extoozy.presentation.manager.MenuManager;
 import ru.extoozy.repository.budget.BudgetRepository;
-import ru.extoozy.repository.budget.impl.BudgetRepositoryImpl;
+import ru.extoozy.repository.budget.impl.JdbcBudgetRepository;
 import ru.extoozy.repository.goal.GoalRepository;
-import ru.extoozy.repository.goal.impl.MemoryGoalRepository;
+import ru.extoozy.repository.goal.impl.JdbcGoalRepository;
 import ru.extoozy.repository.profile.UserProfileRepository;
-import ru.extoozy.repository.profile.impl.MemoryUserProfileRepository;
+import ru.extoozy.repository.profile.impl.JdbcUserProfileRepository;
 import ru.extoozy.repository.transaction.TransactionRepository;
-import ru.extoozy.repository.transaction.impl.MemoryTransactionRepository;
+import ru.extoozy.repository.transaction.impl.JdbcTransactionRepository;
 import ru.extoozy.repository.user.UserRepository;
-import ru.extoozy.repository.user.impl.MemoryUserRepository;
+import ru.extoozy.repository.user.impl.JdbcUserRepository;
 import ru.extoozy.service.auth.AuthService;
 import ru.extoozy.service.auth.impl.AuthServiceImpl;
 import ru.extoozy.service.budget.BudgetService;
@@ -51,23 +51,23 @@ public class FinancialTrackerInitializer {
     public static FinancialTracker initialize() {
         EmailService emailService = new ConsoleMockEmailService();
 
-        BudgetRepository budgetRepository = new BudgetRepositoryImpl();
+        BudgetRepository budgetRepository = new JdbcBudgetRepository();
         BudgetService budgetService = new BudgetServiceImpl(budgetRepository);
         BudgetController budgetController = new BudgetController(budgetService);
 
-        UserProfileRepository userProfileRepository = new MemoryUserProfileRepository();
+        UserProfileRepository userProfileRepository = new JdbcUserProfileRepository();
         UserProfileService userProfileService = new UserProfileServiceImpl(userProfileRepository);
         UserProfileController userProfileController = new UserProfileController(userProfileService);
 
-        TransactionRepository transactionRepository = new MemoryTransactionRepository();
+        TransactionRepository transactionRepository = new JdbcTransactionRepository();
         TransactionService transactionService = new TransactionServiceImpl(transactionRepository, budgetRepository, emailService);
         TransactionController transactionController = new TransactionController(transactionService);
 
-        GoalRepository goalRepository = new MemoryGoalRepository();
+        GoalRepository goalRepository = new JdbcGoalRepository();
         GoalService goalService = new GoalServiceImpl(goalRepository);
         GoalController goalController = new GoalController(goalService);
 
-        UserRepository userRepository = new MemoryUserRepository();
+        UserRepository userRepository = new JdbcUserRepository();
         UserService userService = new UserServiceImpl(userRepository);
         UserController userController = new UserController(userService);
 

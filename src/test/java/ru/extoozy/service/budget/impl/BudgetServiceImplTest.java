@@ -56,10 +56,14 @@ class BudgetServiceImplTest {
     @Test
     @DisplayName("Обновление бюджета - должен обновлять существующий бюджет")
     void testUpdate_whenValidDtoProvided_thenBudgetUpdated() {
-        UpdateBudgetDto dto = new UpdateBudgetDto();
-
+        UpdateBudgetDto dto = UpdateBudgetDto.builder()
+                .maxAmount(BigDecimal.valueOf(500))
+                .currentAmount(BigDecimal.valueOf(500))
+                .build();
+        BudgetEntity budgetEntity = new BudgetEntity();
+        when(budgetRepository.findByUserProfileIdAndCurrentMonth(any())).thenReturn(budgetEntity);
         budgetService.update(dto);
-
+        assertThat(budgetEntity.getCurrentAmount()).usingComparator(BigDecimal::compareTo).isEqualTo(BigDecimal.valueOf(500));
         verify(budgetRepository, times(1)).update(any(BudgetEntity.class));
     }
 
