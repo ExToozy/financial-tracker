@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface BudgetRepository extends CrudRepository<BudgetEntity, Long> {
 
-    List<BudgetEntity> fingAllByUserProfileId(Long id);
+    List<BudgetEntity> findAllByUserProfileId(Long id);
 
     BudgetEntity findByUserProfileIdAndCurrentMonth(Long id);
 

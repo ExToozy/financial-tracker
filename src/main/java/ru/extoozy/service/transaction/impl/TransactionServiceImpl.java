@@ -19,6 +19,7 @@ import ru.extoozy.service.transaction.TransactionService;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -45,6 +46,7 @@ public class TransactionServiceImpl implements TransactionService {
             userBudget = BudgetEntity.builder()
                     .maxAmount(BigDecimal.ZERO)
                     .currentAmount(BigDecimal.ZERO)
+                    .period(YearMonth.now())
                     .userProfile(userProfile)
                     .build();
             budgetRepository.save(userBudget);

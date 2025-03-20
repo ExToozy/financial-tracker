@@ -5,7 +5,6 @@ import ru.extoozy.context.UserContext;
 import ru.extoozy.dto.profile.CreateUserProfileDto;
 import ru.extoozy.dto.profile.UpdateUserProfileDto;
 import ru.extoozy.dto.profile.UserProfileDto;
-import ru.extoozy.entity.UserEntity;
 import ru.extoozy.entity.UserProfileEntity;
 import ru.extoozy.exception.ResourceNotFoundException;
 import ru.extoozy.mapper.UserProfileMapper;
@@ -22,10 +21,9 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public void create(CreateUserProfileDto dto) {
         UserProfileEntity userProfile = UserProfileMapper.toEntity(dto);
-        UserContext.setUser(new UserEntity());
         userProfile.setUser(UserContext.getUser());
-        UserContext.getUser().setUserProfile(userProfile);
         userProfileRepository.save(userProfile);
+        UserContext.getUser().setUserProfile(userProfile);
     }
 
     @Override

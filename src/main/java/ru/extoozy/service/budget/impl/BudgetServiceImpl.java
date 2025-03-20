@@ -29,7 +29,9 @@ public class BudgetServiceImpl implements BudgetService {
 
     @Override
     public void update(UpdateBudgetDto dto) {
-        BudgetEntity budget = BudgetMapper.toEntity(dto);
+        BudgetEntity budget = budgetRepository.findByUserProfileIdAndCurrentMonth(UserContext.getUser().getUserProfile().getId());
+        budget.setMaxAmount(dto.getMaxAmount());
+        budget.setCurrentAmount(dto.getCurrentAmount());
         budget.setUserProfile(UserContext.getUser().getUserProfile());
         budgetRepository.update(budget);
     }

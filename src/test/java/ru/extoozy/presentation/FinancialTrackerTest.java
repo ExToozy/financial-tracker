@@ -1,7 +1,11 @@
 package ru.extoozy.presentation;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.extoozy.config.DbConfig;
 import ru.extoozy.context.ApplicationContext;
 import ru.extoozy.controller.AuthController;
 import ru.extoozy.controller.BudgetController;
@@ -13,18 +17,19 @@ import ru.extoozy.controller.UserProfileController;
 import ru.extoozy.entity.UserEntity;
 import ru.extoozy.enums.UserRole;
 import ru.extoozy.in.ConsoleInHelper;
+import ru.extoozy.migration.MigrationTool;
 import ru.extoozy.presentation.manager.ActionManager;
 import ru.extoozy.presentation.manager.MenuManager;
 import ru.extoozy.repository.budget.BudgetRepository;
-import ru.extoozy.repository.budget.impl.BudgetRepositoryImpl;
+import ru.extoozy.repository.budget.impl.JdbcBudgetRepository;
 import ru.extoozy.repository.goal.GoalRepository;
-import ru.extoozy.repository.goal.impl.MemoryGoalRepository;
+import ru.extoozy.repository.goal.impl.JdbcGoalRepository;
 import ru.extoozy.repository.profile.UserProfileRepository;
-import ru.extoozy.repository.profile.impl.MemoryUserProfileRepository;
+import ru.extoozy.repository.profile.impl.JdbcUserProfileRepository;
 import ru.extoozy.repository.transaction.TransactionRepository;
-import ru.extoozy.repository.transaction.impl.MemoryTransactionRepository;
+import ru.extoozy.repository.transaction.impl.JdbcTransactionRepository;
 import ru.extoozy.repository.user.UserRepository;
-import ru.extoozy.repository.user.impl.MemoryUserRepository;
+import ru.extoozy.repository.user.impl.JdbcUserRepository;
 import ru.extoozy.security.PasswordHelper;
 import ru.extoozy.service.auth.AuthService;
 import ru.extoozy.service.auth.impl.AuthServiceImpl;
@@ -45,33 +50,58 @@ import ru.extoozy.service.user.impl.UserServiceImpl;
 
 import java.io.ByteArrayInputStream;
 import java.lang.reflect.Field;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Scanner;
 
 class FinancialTrackerTest {
 
+    private static Connection connection;
     private FinancialTracker financialTracker;
+
+    @BeforeAll
+    static void runMigration() throws SQLException {
+        DbConfig dbConfig = new DbConfig();
+        connection = DriverManager.getConnection(dbConfig.getUrl(), dbConfig.getUsername(), dbConfig.getUsername());
+        MigrationTool.runMigrate();
+    }
+
+    @AfterAll
+    static void tearDown() throws SQLException {
+        connection.close();
+    }
+
+    @AfterEach
+    void deleteAll() throws SQLException {
+        connection.createStatement().execute("DELETE FROM financial_tracker_schema.transactions");
+        connection.createStatement().execute("DELETE FROM financial_tracker_schema.goals");
+        connection.createStatement().execute("DELETE FROM financial_tracker_schema.budgets");
+        connection.createStatement().execute("DELETE FROM financial_tracker_schema.user_profiles");
+        connection.createStatement().execute("DELETE FROM financial_tracker_schema.users");
+    }
 
     @BeforeEach
     void setUp() {
         EmailService emailService = new ConsoleMockEmailService();
 
-        BudgetRepository budgetRepository = new BudgetRepositoryImpl();
+        BudgetRepository budgetRepository = new JdbcBudgetRepository();
         BudgetService budgetService = new BudgetServiceImpl(budgetRepository);
         BudgetController budgetController = new BudgetController(budgetService);
 
-        UserProfileRepository userProfileRepository = new MemoryUserProfileRepository();
+        UserProfileRepository userProfileRepository = new JdbcUserProfileRepository();
         UserProfileService userProfileService = new UserProfileServiceImpl(userProfileRepository);
         UserProfileController userProfileController = new UserProfileController(userProfileService);
 
-        TransactionRepository transactionRepository = new MemoryTransactionRepository();
+        TransactionRepository transactionRepository = new JdbcTransactionRepository();
         TransactionService transactionService = new TransactionServiceImpl(transactionRepository, budgetRepository, emailService);
         TransactionController transactionController = new TransactionController(transactionService);
 
-        GoalRepository goalRepository = new MemoryGoalRepository();
+        GoalRepository goalRepository = new JdbcGoalRepository();
         GoalService goalService = new GoalServiceImpl(goalRepository);
         GoalController goalController = new GoalController(goalService);
 
-        UserRepository userRepository = new MemoryUserRepository();
+        UserRepository userRepository = new JdbcUserRepository();
         userRepository.save(UserEntity.builder()
                 .email("admin")
                 .password(PasswordHelper.getPasswordHash("admin"))

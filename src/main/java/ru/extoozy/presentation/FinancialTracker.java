@@ -81,7 +81,7 @@ public class FinancialTracker {
      */
     private void runUserLoop() {
         while (true) {
-            if (UserContext.getUser().getUserProfile() == null) {
+            if (UserContext.getUser().getUserProfile().getId() == 0) {
                 actionManager.doAction(ProfileAction.CREATE_PROFILE);
             } else {
                 menuManager.printUserMenu();
