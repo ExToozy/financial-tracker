@@ -1,44 +1,45 @@
 package ru.extoozy.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import ru.extoozy.dto.profile.CreateUserProfileDto;
+import ru.extoozy.dto.profile.DeleteUserProfileDto;
+import ru.extoozy.dto.profile.GetUserProfileDto;
 import ru.extoozy.dto.profile.UpdateUserProfileDto;
 import ru.extoozy.dto.profile.UserProfileDto;
 import ru.extoozy.entity.UserProfileEntity;
+import ru.extoozy.util.MapperConverter;
 
 import java.util.List;
+import java.util.Map;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserProfileMapper {
+@Mapper(uses = MapperConverter.class)
+public interface UserProfileMapper {
 
-    public static UserProfileEntity toEntity(CreateUserProfileDto dto) {
-        return UserProfileEntity.builder()
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .build();
-    }
+    UserProfileMapper INSTANCE = Mappers.getMapper(UserProfileMapper.class);
 
-    public static UserProfileEntity toEntity(UpdateUserProfileDto dto) {
-        return UserProfileEntity.builder()
-                .id(dto.getId())
-                .firstName(dto.getFirstName())
-                .lastName(dto.getLastName())
-                .build();
-    }
+    UserProfileEntity toEntity(CreateUserProfileDto dto);
 
-    public static UserProfileDto toDto(UserProfileEntity entity) {
-        return UserProfileDto.builder()
-                .id(entity.getId())
-                .firstName(entity.getFirstName())
-                .lastName(entity.getLastName())
-                .build();
-    }
+    UserProfileEntity toEntity(UpdateUserProfileDto dto);
 
-    public static List<UserProfileDto> toDto(List<UserProfileEntity> entities) {
-        return entities.stream()
-                .map(UserProfileMapper::toDto)
-                .toList();
-    }
+    UserProfileDto toDto(UserProfileEntity entity);
+
+    @Mapping(target = "firstName", source = "firstname")
+    @Mapping(target = "lastName", source = "lastname")
+    CreateUserProfileDto toCreateUserProfileDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "id", source = "user_profile_id")
+    @Mapping(target = "firstName", source = "firstname")
+    @Mapping(target = "lastName", source = "lastname")
+    UpdateUserProfileDto toUpdateUserProfileDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "userId", source = "user_id")
+    GetUserProfileDto toGetUserProfileDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "userProfileId", source = "user_profile_id")
+    DeleteUserProfileDto toDeleteUserProfileDto(Map<String, Object> jsonMap);
+
+    List<UserProfileDto> toDto(List<UserProfileEntity> entities);
 
 }

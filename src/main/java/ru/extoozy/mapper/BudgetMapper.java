@@ -1,43 +1,39 @@
 package ru.extoozy.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import ru.extoozy.dto.budget.BudgetDto;
 import ru.extoozy.dto.budget.CreateBudgetDto;
+import ru.extoozy.dto.budget.GetBudgetDto;
 import ru.extoozy.dto.budget.UpdateBudgetDto;
 import ru.extoozy.entity.BudgetEntity;
+import ru.extoozy.util.MapperConverter;
 
 import java.util.List;
+import java.util.Map;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class BudgetMapper {
+@Mapper(uses = MapperConverter.class)
+public interface BudgetMapper {
 
-    public static BudgetEntity toEntity(CreateBudgetDto dto) {
-        return BudgetEntity.builder()
-                .maxAmount(dto.getMaxAmount())
-                .build();
-    }
+    BudgetMapper INSTANCE = Mappers.getMapper(BudgetMapper.class);
 
-    public static BudgetEntity toEntity(UpdateBudgetDto dto) {
-        return BudgetEntity.builder()
-                .id(dto.getId())
-                .maxAmount(dto.getMaxAmount())
-                .build();
-    }
+    BudgetEntity toEntity(CreateBudgetDto dto);
 
-    public static BudgetDto toDto(BudgetEntity entity) {
-        return BudgetDto.builder()
-                .id(entity.getId())
-                .period(entity.getPeriod())
-                .maxAmount(entity.getMaxAmount())
-                .currentAmount(entity.getCurrentAmount())
-                .build();
-    }
+    BudgetEntity toEntity(UpdateBudgetDto dto);
 
-    public static List<BudgetDto> toDto(List<BudgetEntity> entities) {
-        return entities.stream()
-                .map(BudgetMapper::toDto)
-                .toList();
-    }
+    BudgetDto toDto(BudgetEntity entity);
+
+    @Mapping(target = "maxAmount", source = "max_amount")
+    CreateBudgetDto toCreateBudgetDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "budgetId", source = "budget_id")
+    @Mapping(target = "maxAmount", source = "max_amount")
+    UpdateBudgetDto toUpdateBudgetDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "userProfileId", source = "user_profile_id")
+    GetBudgetDto toGetBudgetDto(Map<String, Object> jsonMap);
+
+    List<BudgetDto> toDto(List<BudgetEntity> entities);
 
 }

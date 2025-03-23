@@ -15,10 +15,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 public class MigrationTool {
-    public static void main(String[] args) {
-        runMigrate();
-    }
-
     public static void runMigrate() {
         DbConfig dbConfig = new DbConfig();
         try (Connection connection = DriverManager.getConnection(dbConfig.getUrl(), dbConfig.getUsername(),

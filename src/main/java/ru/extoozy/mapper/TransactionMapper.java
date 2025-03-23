@@ -1,51 +1,43 @@
 package ru.extoozy.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import ru.extoozy.dto.transaction.CreateTransactionDto;
+import ru.extoozy.dto.transaction.DeleteTransactionDto;
+import ru.extoozy.dto.transaction.GetTransactionsDto;
 import ru.extoozy.dto.transaction.TransactionDto;
 import ru.extoozy.dto.transaction.UpdateTransactionDto;
 import ru.extoozy.entity.TransactionEntity;
+import ru.extoozy.util.MapperConverter;
 
 import java.util.List;
+import java.util.Map;
 
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class TransactionMapper {
+@Mapper(uses = MapperConverter.class)
+public interface TransactionMapper {
 
-    public static TransactionEntity toEntity(CreateTransactionDto dto) {
-        return TransactionEntity.builder()
-                .category(dto.getCategory())
-                .description(dto.getDescription())
-                .transactionType(dto.getTransactionType())
-                .amount(dto.getAmount())
-                .build();
-    }
+    TransactionMapper INSTANCE = Mappers.getMapper(TransactionMapper.class);
 
-    public static TransactionEntity toEntity(UpdateTransactionDto dto) {
-        return TransactionEntity.builder()
-                .id(dto.getId())
-                .category(dto.getCategory())
-                .description(dto.getDescription())
-                .amount(dto.getAmount())
-                .build();
-    }
+    TransactionEntity toEntity(CreateTransactionDto dto);
 
-    public static TransactionDto toDto(TransactionEntity entity) {
-        return TransactionDto.builder()
-                .id(entity.getId())
-                .createdAt(entity.getCreatedAt())
-                .category(entity.getCategory())
-                .description(entity.getDescription())
-                .transactionType(entity.getTransactionType())
-                .amount(entity.getAmount())
-                .build();
-    }
+    TransactionEntity toEntity(UpdateTransactionDto dto);
 
-    public static List<TransactionDto> toDto(List<TransactionEntity> entities) {
-        return entities.stream()
-                .map(TransactionMapper::toDto)
-                .toList();
-    }
+    @Mapping(target = "id", source = "transaction_id")
+    UpdateTransactionDto toUpdateTransactionDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "transactionType", source = "transaction_type", qualifiedByName = "transactionTypeStrToEnum")
+    CreateTransactionDto toCreateTransactionDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "id", source = "transaction_id")
+    DeleteTransactionDto toDeleteTransactionDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "userProfileId", source = "user_profile_id")
+    GetTransactionsDto toGetTransactionsDto(Map<String, Object> jsonMap);
+
+    TransactionDto toDto(TransactionEntity entity);
+
+    List<TransactionDto> toDto(List<TransactionEntity> entities);
 
 }

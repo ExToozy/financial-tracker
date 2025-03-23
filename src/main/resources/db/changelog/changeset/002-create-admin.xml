@@ -8,7 +8,8 @@
     <changeSet id="002-insert-data" author="ExToozy">
         <insert tableName="users">
             <column name="email" value="admin"/>
-            <column name="password" value="uirnF4LXZpkp2lxkqs1V4Q=="/>
+            <column name="password" value="oI3PdKpcZHtWcMfpPwXw0w=="/>
+            <column name="role" value="ADMIN"/>
         </insert>
     </changeSet>
 </databaseChangeLog>

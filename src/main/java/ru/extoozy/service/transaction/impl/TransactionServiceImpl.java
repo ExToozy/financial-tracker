@@ -7,9 +7,11 @@ import ru.extoozy.dto.transaction.TransactionDto;
 import ru.extoozy.dto.transaction.UpdateTransactionDto;
 import ru.extoozy.entity.BudgetEntity;
 import ru.extoozy.entity.TransactionEntity;
+import ru.extoozy.entity.UserEntity;
 import ru.extoozy.entity.UserProfileEntity;
 import ru.extoozy.enums.EmailType;
 import ru.extoozy.enums.TransactionType;
+import ru.extoozy.enums.UserRole;
 import ru.extoozy.exception.ResourceNotFoundException;
 import ru.extoozy.mapper.TransactionMapper;
 import ru.extoozy.repository.budget.BudgetRepository;
@@ -31,9 +33,19 @@ public class TransactionServiceImpl implements TransactionService {
 
     private final EmailService emailService;
 
+    private boolean userDoesNotHaveAccessToTransaction(UserEntity user, TransactionEntity transaction) {
+        return !user.getRole().equals(UserRole.ADMIN) &&
+                !user.getUserProfile().getId().equals(transaction.getUserProfile().getId());
+    }
+
+    private boolean userDoesNotHaveAccessToUserProfile(UserEntity user, Long userProfileId) {
+        return !user.getRole().equals(UserRole.ADMIN) &&
+                !user.getUserProfile().getId().equals(userProfileId);
+    }
+
     @Override
     public void create(CreateTransactionDto dto) {
-        TransactionEntity transaction = TransactionMapper.toEntity(dto);
+        TransactionEntity transaction = TransactionMapper.INSTANCE.toEntity(dto);
         UserProfileEntity userProfile = UserContext.getUser().getUserProfile();
         transaction.setCreatedAt(LocalDateTime.now());
         transaction.setUserProfile(userProfile);
@@ -60,24 +72,58 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public void update(UpdateTransactionDto dto) {
-        TransactionEntity entity = TransactionMapper.toEntity(dto);
+        TransactionEntity transaction = transactionRepository.findById(dto.getId());
+        if (userDoesNotHaveAccessToTransaction(UserContext.getUser(), transaction)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to transaction with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            transaction.getId()
+                    )
+            );
+        }
+        TransactionEntity entity = TransactionMapper.INSTANCE.toEntity(dto);
         transactionRepository.update(entity);
     }
 
     @Override
     public TransactionDto get(Long id) {
         TransactionEntity transaction = transactionRepository.findById(id);
-        return TransactionMapper.toDto(transaction);
+        if (userDoesNotHaveAccessToTransaction(UserContext.getUser(), transaction)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to transaction with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            transaction.getId()
+                    )
+            );
+        }
+        return TransactionMapper.INSTANCE.toDto(transaction);
     }
 
     @Override
     public List<TransactionDto> getAllByUserProfileId(Long userProfileId) {
+        if (userDoesNotHaveAccessToUserProfile(UserContext.getUser(), userProfileId)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to user profile with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            userProfileId
+                    )
+            );
+        }
         List<TransactionEntity> userTransactions = transactionRepository.findAllByUserProfileId(userProfileId);
-        return TransactionMapper.toDto(userTransactions);
+        return TransactionMapper.INSTANCE.toDto(userTransactions);
     }
 
     @Override
     public void delete(Long id) {
+        TransactionEntity transaction = transactionRepository.findById(id);
+        if (userDoesNotHaveAccessToTransaction(UserContext.getUser(), transaction)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to transaction with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            transaction.getId()
+                    )
+            );
+        }
         boolean deleted = transactionRepository.delete(id);
         if (!deleted) {
             throw new ResourceNotFoundException("Transaction with id=%s not found".formatted(id));

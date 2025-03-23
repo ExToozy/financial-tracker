@@ -1,8 +1,12 @@
 package ru.extoozy.service.statistic.impl;
 
 import lombok.RequiredArgsConstructor;
+import ru.extoozy.context.UserContext;
 import ru.extoozy.entity.TransactionEntity;
+import ru.extoozy.entity.UserEntity;
 import ru.extoozy.enums.TransactionType;
+import ru.extoozy.enums.UserRole;
+import ru.extoozy.exception.ResourceNotFoundException;
 import ru.extoozy.repository.transaction.TransactionRepository;
 import ru.extoozy.service.statistic.TransactionStatisticService;
 
@@ -19,6 +23,14 @@ public class TransactionStatisticServiceImpl implements TransactionStatisticServ
 
     @Override
     public Map<String, Object> getFullUserStatistic(Long userProfileId) {
+        if (userDoesNotHaveAccessToUserProfile(UserContext.getUser(), userProfileId)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to user profile with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            userProfileId
+                    )
+            );
+        }
         List<TransactionEntity> transactions = transactionRepository.findAllByUserProfileId(userProfileId);
         Map<String, Object> userTransactionsStatistic = getUserTransactionsStatistic(transactions);
         userTransactionsStatistic.put(
@@ -30,6 +42,14 @@ public class TransactionStatisticServiceImpl implements TransactionStatisticServ
 
     @Override
     public Map<String, Object> getUserTransactionsStatisticByPeriod(Long userProfileId, LocalDate start, LocalDate end) {
+        if (userDoesNotHaveAccessToUserProfile(UserContext.getUser(), userProfileId)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to user profile with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            userProfileId
+                    )
+            );
+        }
         List<TransactionEntity> transactions = transactionRepository.findAllByUserProfileId(userProfileId);
         List<TransactionEntity> transactionsInPeriod = transactions.stream()
                 .filter(transaction -> transaction.getCreatedAt().isAfter(start.atStartOfDay()))
@@ -41,6 +61,14 @@ public class TransactionStatisticServiceImpl implements TransactionStatisticServ
 
     @Override
     public Map<String, BigDecimal> getTotalWithdrawalTransactionsAmountGroupedByCategory(Long userProfileId) {
+        if (userDoesNotHaveAccessToUserProfile(UserContext.getUser(), userProfileId)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to user profile with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            userProfileId
+                    )
+            );
+        }
         List<TransactionEntity> transactions = transactionRepository.findAllByUserProfileId(userProfileId);
         HashMap<String, BigDecimal> map = new HashMap<>();
         for (TransactionEntity transaction : transactions) {
@@ -54,12 +82,25 @@ public class TransactionStatisticServiceImpl implements TransactionStatisticServ
 
     @Override
     public BigDecimal getUserBalance(Long userProfileId) {
+        if (userDoesNotHaveAccessToUserProfile(UserContext.getUser(), userProfileId)) {
+            throw new ResourceNotFoundException(
+                    "The user with id=%s does not have access to user profile with id=%s".formatted(
+                            UserContext.getUser().getId(),
+                            userProfileId
+                    )
+            );
+        }
         List<TransactionEntity> transactions = transactionRepository.findAllByUserProfileId(userProfileId);
         BigDecimal balance = BigDecimal.ZERO;
         for (TransactionEntity transaction : transactions) {
             balance = balance.add(transaction.getAmount().multiply(transaction.getTransactionType().getSign()));
         }
         return balance;
+    }
+
+    private boolean userDoesNotHaveAccessToUserProfile(UserEntity user, Long userProfileId) {
+        return !user.getRole().equals(UserRole.ADMIN) &&
+                !user.getUserProfile().getId().equals(userProfileId);
     }
 
     private Map<String, Object> getUserTransactionsStatistic(List<TransactionEntity> transactions) {

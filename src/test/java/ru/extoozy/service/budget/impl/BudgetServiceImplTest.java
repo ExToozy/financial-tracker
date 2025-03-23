@@ -13,6 +13,7 @@ import ru.extoozy.dto.budget.UpdateBudgetDto;
 import ru.extoozy.entity.BudgetEntity;
 import ru.extoozy.entity.UserEntity;
 import ru.extoozy.entity.UserProfileEntity;
+import ru.extoozy.enums.UserRole;
 import ru.extoozy.repository.budget.BudgetRepository;
 
 import java.math.BigDecimal;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
 
 class BudgetServiceImplTest {
 
+    public UserEntity user = new UserEntity();
     @Mock
     private BudgetRepository budgetRepository;
 
@@ -34,7 +36,9 @@ class BudgetServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         UserProfileEntity userProfile = new UserProfileEntity();
-        UserEntity user = new UserEntity();
+        userProfile.setId(1L);
+        user.setId(1L);
+        user.setRole(UserRole.ADMIN);
         user.setUserProfile(userProfile);
         UserContext.setUser(user);
     }
@@ -43,6 +47,7 @@ class BudgetServiceImplTest {
     @DisplayName("Создание бюджета - должен сохранять бюджет с текущим месяцем и нулевой суммой")
     void testCreate_whenValidDtoProvided_thenBudgetSaved() {
         CreateBudgetDto dto = new CreateBudgetDto();
+        dto.setMaxAmount(BigDecimal.TEN);
         BudgetEntity budgetEntity = new BudgetEntity();
         budgetEntity.setUserProfile(UserContext.getUser().getUserProfile());
         budgetEntity.setPeriod(YearMonth.now());
@@ -58,12 +63,13 @@ class BudgetServiceImplTest {
     void testUpdate_whenValidDtoProvided_thenBudgetUpdated() {
         UpdateBudgetDto dto = UpdateBudgetDto.builder()
                 .maxAmount(BigDecimal.valueOf(500))
-                .currentAmount(BigDecimal.valueOf(500))
                 .build();
         BudgetEntity budgetEntity = new BudgetEntity();
-        when(budgetRepository.findByUserProfileIdAndCurrentMonth(any())).thenReturn(budgetEntity);
+        budgetEntity.setMaxAmount(BigDecimal.valueOf(400));
+        budgetEntity.setUserProfile(user.getUserProfile());
+        when(budgetRepository.findById(any())).thenReturn(budgetEntity);
         budgetService.update(dto);
-        assertThat(budgetEntity.getCurrentAmount()).usingComparator(BigDecimal::compareTo).isEqualTo(BigDecimal.valueOf(500));
+        assertThat(budgetEntity.getMaxAmount()).usingComparator(BigDecimal::compareTo).isEqualTo(BigDecimal.valueOf(500));
         verify(budgetRepository, times(1)).update(any(BudgetEntity.class));
     }
 
@@ -72,7 +78,11 @@ class BudgetServiceImplTest {
     void testGetByUserProfileIdAndCurrentMonth_whenValidIdProvided_thenReturnBudgetDto() {
         Long userProfileId = 1L;
         BudgetEntity budgetEntity = new BudgetEntity();
-
+        budgetEntity.setId(1L);
+        budgetEntity.setMaxAmount(BigDecimal.valueOf(100));
+        budgetEntity.setCurrentAmount(BigDecimal.valueOf(10));
+        budgetEntity.setPeriod(YearMonth.now());
+        budgetEntity.setUserProfile(user.getUserProfile());
         when(budgetRepository.findByUserProfileIdAndCurrentMonth(userProfileId)).thenReturn(budgetEntity);
 
         BudgetDto result = budgetService.getByUserProfileIdAndCurrentMonth(userProfileId);
