@@ -11,11 +11,11 @@ import java.util.HashMap;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ApplicationContext {
-
     /**
      * Внутреннее хранилище зарегистрированных бинов, сопоставленных по их типу класса.
      */
     private static final HashMap<Class<?>, Object> BEANS = new HashMap<>();
+
 
     /**
      * Добавляет бин в контекст приложения.

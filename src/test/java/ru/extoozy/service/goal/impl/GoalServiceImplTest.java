@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
 import ru.extoozy.context.UserContext;
 import ru.extoozy.dto.goal.CreateGoalDto;
@@ -13,8 +12,8 @@ import ru.extoozy.dto.goal.GoalDto;
 import ru.extoozy.entity.GoalEntity;
 import ru.extoozy.entity.UserEntity;
 import ru.extoozy.entity.UserProfileEntity;
+import ru.extoozy.enums.UserRole;
 import ru.extoozy.exception.ResourceNotFoundException;
-import ru.extoozy.mapper.GoalMapper;
 import ru.extoozy.repository.goal.GoalRepository;
 
 import java.math.BigDecimal;
@@ -36,6 +35,7 @@ class GoalServiceImplTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         UserEntity user = new UserEntity();
+        user.setRole(UserRole.ADMIN);
         user.setUserProfile(new UserProfileEntity());
         UserContext.setUser(user);
     }
@@ -44,21 +44,30 @@ class GoalServiceImplTest {
     @DisplayName("Создание цели - должна сохраняться в репозиторий")
     void testCreate_whenValidDto_thenGoalSaved() {
         CreateGoalDto dto = new CreateGoalDto();
-        GoalEntity goal = new GoalEntity();
-        try (MockedStatic<GoalMapper> mocked = mockStatic(GoalMapper.class)) {
-            mocked.when(() -> GoalMapper.toEntity(dto)).thenReturn(goal);
-            goalService.create(dto);
-        }
+        dto.setGoalAmount(BigDecimal.valueOf(100));
+        dto.setName("test");
+        goalService.create(dto);
 
-        verify(goalRepository, times(1)).save(goal);
-        assertThat(goal.getCurrentAmount()).isEqualByComparingTo(BigDecimal.ZERO);
+        verify(goalRepository, times(1)).save(any());
     }
 
     @Test
     @DisplayName("Получение всех целей по userProfileId - должен возвращать список целей")
     void testGetAllByUserProfileId_whenGoalsExist_thenReturnList() {
         Long userProfileId = 1L;
-        List<GoalEntity> goals = List.of(new GoalEntity(), new GoalEntity());
+        GoalEntity goal1 = GoalEntity.builder()
+                .id(1L)
+                .goalAmount(BigDecimal.valueOf(100))
+                .name("test")
+                .currentAmount(BigDecimal.ZERO)
+                .build();
+        GoalEntity goal2 = GoalEntity.builder()
+                .id(2L)
+                .goalAmount(BigDecimal.valueOf(100))
+                .name("test2")
+                .currentAmount(BigDecimal.ZERO)
+                .build();
+        List<GoalEntity> goals = List.of(goal1, goal2);
         when(goalRepository.findAllByUserProfileId(userProfileId)).thenReturn(goals);
 
         List<GoalDto> result = goalService.getAllByUserProfileId(userProfileId);

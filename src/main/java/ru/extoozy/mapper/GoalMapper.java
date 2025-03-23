@@ -1,36 +1,40 @@
 package ru.extoozy.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import ru.extoozy.dto.goal.CreateGoalDto;
+import ru.extoozy.dto.goal.DeleteGoalDto;
+import ru.extoozy.dto.goal.GetGoalsDto;
 import ru.extoozy.dto.goal.GoalDto;
+import ru.extoozy.dto.goal.ReplenishGoalDto;
 import ru.extoozy.entity.GoalEntity;
+import ru.extoozy.util.MapperConverter;
 
 import java.util.List;
+import java.util.Map;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GoalMapper {
+@Mapper(uses = MapperConverter.class)
+public interface GoalMapper {
 
-    public static GoalEntity toEntity(CreateGoalDto dto) {
-        return GoalEntity.builder()
-                .name(dto.getName())
-                .goalAmount(dto.getGoalAmount())
-                .build();
-    }
+    GoalMapper INSTANCE = Mappers.getMapper(GoalMapper.class);
 
-    public static GoalDto toDto(GoalEntity entity) {
-        return GoalDto.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .goalAmount(entity.getGoalAmount())
-                .currentAmount(entity.getCurrentAmount())
-                .build();
-    }
+    GoalEntity toEntity(CreateGoalDto dto);
 
-    public static List<GoalDto> toDto(List<GoalEntity> entities) {
-        return entities.stream()
-                .map(GoalMapper::toDto)
-                .toList();
-    }
+    GoalDto toDto(GoalEntity entity);
+
+    List<GoalDto> toDto(List<GoalEntity> entities);
+
+    @Mapping(target = "goalAmount", source = "goal_amount")
+    CreateGoalDto toCreateGoalDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "goalId", source = "goal_id")
+    ReplenishGoalDto toReplenishGoalDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "goalId", source = "goal_id")
+    DeleteGoalDto toDeleteGoalDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "userProfileId", source = "user_profile_id")
+    GetGoalsDto toGetGoalsDto(Map<String, Object> jsonMap);
 
 }

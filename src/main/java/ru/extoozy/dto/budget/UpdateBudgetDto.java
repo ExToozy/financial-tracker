@@ -15,9 +15,7 @@ import java.math.BigDecimal;
 @Builder
 public class UpdateBudgetDto {
 
-    private Long id;
+    private Long budgetId;
 
     private BigDecimal maxAmount;
-
-    private BigDecimal currentAmount;
 }

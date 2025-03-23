@@ -1,45 +1,40 @@
 package ru.extoozy.mapper;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import ru.extoozy.dto.user.AuthUserDto;
+import ru.extoozy.dto.user.DeleteUserDto;
+import ru.extoozy.dto.user.GetUserDto;
 import ru.extoozy.dto.user.UpdateUserDto;
 import ru.extoozy.dto.user.UserDto;
 import ru.extoozy.entity.UserEntity;
+import ru.extoozy.util.MapperConverter;
 
 import java.util.List;
+import java.util.Map;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UserMapper {
+@Mapper(uses = MapperConverter.class)
+public interface UserMapper {
+    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
 
-    public static UserEntity toEntity(AuthUserDto dto) {
-        return UserEntity.builder()
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .build();
-    }
+    UserEntity toEntity(AuthUserDto dto);
 
-    public static UserEntity toEntity(UpdateUserDto dto) {
-        return UserEntity.builder()
-                .id(dto.getId())
-                .email(dto.getEmail())
-                .password(dto.getPassword())
-                .build();
-    }
+    UserEntity toEntity(UpdateUserDto dto);
 
-    public static UserDto toDto(UserEntity dto) {
-        return UserDto.builder()
-                .id(dto.getId())
-                .email(dto.getEmail())
-                .role(dto.getRole())
-                .blocked(dto.isBlocked())
-                .build();
-    }
+    AuthUserDto toAuthDto(Map<String, Object> jsonMap);
 
-    public static List<UserDto> toDto(List<UserEntity> entities) {
-        return entities.stream()
-                .map(UserMapper::toDto)
-                .toList();
-    }
+    @Mapping(target = "id", source = "user_id")
+    UpdateUserDto toUpdateDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "userId", source = "user_id")
+    GetUserDto toGetUserDto(Map<String, Object> jsonMap);
+
+    @Mapping(target = "userId", source = "user_id")
+    DeleteUserDto toDeleteUserDto(Map<String, Object> jsonMap);
+
+    UserDto toDto(UserEntity dto);
+
+    List<UserDto> toDto(List<UserEntity> entities);
 
 }

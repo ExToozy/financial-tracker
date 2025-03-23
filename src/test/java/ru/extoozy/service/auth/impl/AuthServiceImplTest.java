@@ -122,14 +122,15 @@ class AuthServiceImplTest {
     void testAuthenticate_whenValid_thenSuccess() {
         AuthUserDto dto = new AuthUserDto("test@example.com", "password");
         UserEntity user = new UserEntity();
+        user.setId(1L);
         user.setEmail(dto.getEmail());
         user.setPassword(PasswordHelper.getPasswordHash(dto.getPassword()));
         user.setBlocked(false);
 
         when(userRepository.getByEmail(dto.getEmail())).thenReturn(user);
 
-        authService.authenticate(dto);
+        String token = authService.authenticate(dto);
 
-        assertThat(UserContext.getUser()).isEqualTo(user);
+        assertThat(token).isEqualTo("1");
     }
 }

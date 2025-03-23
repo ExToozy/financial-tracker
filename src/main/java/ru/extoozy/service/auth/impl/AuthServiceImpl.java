@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void authenticate(AuthUserDto dto) {
+    public String authenticate(AuthUserDto dto) {
         UserEntity user = userRepository.getByEmail(dto.getEmail());
 
         if (!PasswordHelper.checkPasswordEquals(dto.getPassword(), user.getPassword())) {
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UserIsBlockedException("User blocked");
         }
 
-        UserContext.setUser(user);
+        return user.getId().toString();
 
     }
 }

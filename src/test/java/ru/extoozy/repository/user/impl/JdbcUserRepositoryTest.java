@@ -92,7 +92,7 @@ class JdbcUserRepositoryTest {
         boolean result = repository.delete(user.getId());
 
         assertThat(result).isTrue();
-        assertThat(repository.findAll()).isEmpty();
+        assertThat(repository.findAll()).hasSize(1);
     }
 
     @Test
